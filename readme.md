@@ -44,10 +44,7 @@ $$
 x \\
 y \\
 z
-\end{bmatrix}
-
- = R_z(\phi)
-
+\end{bmatrix} = R_z(\phi)
 \begin{bmatrix}
 x' \\
 y' \\
@@ -59,12 +56,10 @@ Doing so yields:
 
 $$
 R_z(\phi) = 
-
 \begin{bmatrix}
 \cos \phi & -\sin \phi & 0 \\
 \sin \phi & \cos \phi & 0 \\
 0 & 0 & 1
-
 \end{bmatrix}
 $$
 
@@ -72,7 +67,6 @@ We can now convert the position of the pivot and the mass from the rotating fram
 
 $$
 \vec{r'}_{Pivot} = 
-
 \begin{bmatrix}
 w_1 \\
 0 \\
@@ -83,7 +77,6 @@ $$
 Therefore, the pivot position in the inertial frame can be expressed as:
 $$
 \vec{r}_{Pivot} = 
-
 \begin{bmatrix}
 w_1 \cos(\Omega t) \\
 w_1 \sin(\Omega t) \\
@@ -95,7 +88,6 @@ The position of the mass the rotating frame relative to the pivot can be express
 
 $$
 \vec{r'}_{Mass, rel} = 
-
 \begin{bmatrix}
 L \sin(\theta) \\
 0 \\
@@ -107,7 +99,6 @@ Where $\theta$ is the angle in the $x'- z'$ plane between the pendulum and the v
 
 $$
 \vec{r}_{Mass, rel} = 
-
 \begin{bmatrix}
 L \sin(\theta) \cos(\Omega t) \\
 L \sin(\theta) \sin(\Omega t) \\
@@ -119,7 +110,6 @@ The absolute position of the mass in the inertial frame can then be expressed as
 
 $$
 \vec{r}_{Mass} = \vec{r}_{Pivot} + \vec{r}_{Mass, rel} = 
-
 \begin{bmatrix}
 \cos(\Omega t)\left[w_1 + L \sin \theta (t)\right] \\
 \sin(\Omega t)\left[w_1 + L \sin \theta (t)\right] \\
@@ -162,9 +152,7 @@ $$
 Finally we can used the Euler-Lagrange equation, $\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = 0 $, to find the equation of motion for the system:
 
 $$
-\boxed{
 \ddot{\theta}(t) = \frac{\Omega^2}{L} \left(w_1 + L \sin \theta (t) \right) \cos \theta (t) - \frac{g}{L} \sin \theta (t)
-}
 $$
 
 **Please note, a full derrivation of the equation above can be found in the project01_team06_notes.pdf file in the notes directory of the repository.** 
@@ -181,12 +169,10 @@ $$
 Therefore, we have:
 
 $$
-\boxed{
 \begin{aligned}
-\dot{u}_1 &= u_2 \\[6pt]
+\dot{u}_1 &= u_2 \\
 \dot{u}_2 &= \frac{\Omega^2}{L} \left(w_1 + L \sin \theta (t) \right) \cos \theta (t) - \frac{g}{L} \sin \theta (t)
 \end{aligned}
-}
 $$
 
 Finally, we must determine a low and high speed for $\Omega$. Given that the natural frequency of the pendulum is
