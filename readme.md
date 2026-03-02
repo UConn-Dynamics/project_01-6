@@ -34,6 +34,9 @@ All source code is in the `src/` directory.
 # Project Structure
 TBD
 
+# Results
+TBD (Include Plots, Animations, Comparison of hand derrived eqns to those derived using Julia)
+
 
 # Analysis:
 
