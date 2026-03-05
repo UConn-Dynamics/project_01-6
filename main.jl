@@ -9,12 +9,26 @@ using .Simulate
 using .Visualize
 using Plots
 
+function solution_delta(sol, L, w1, h1, g, Ω)
+    ts = sol.t
+    θs = getindex.(sol.u, 1)
+    θds = getindex.(sol.u, 2)
+
+    deltas = [
+        θdd_delta_numeric(θs[i], θds[i], L, w1, h1, g, Ω, ts[i])
+        for i in eachindex(ts)
+    ]
+
+    return ts, deltas
+end
+
 function main()
     # physical constants
     L = 0.15   # length of pendulum
     w1 = 0.10  # horizontal offset of pivot
     h1 = 0.20  # vertical offset of pivot
     g = 9.81   # gravitational acceleration
+    tspan = (0.0, 10.0)  # time span for simulation
 
     Ω_slow = 1.0     # rad/s
     Ω_fast = 12.0    # rad/s
@@ -27,30 +41,75 @@ function main()
     params_fast = (L, w1, h1, g, Ω_fast)
 
     # run simulations
-    sol_slow_zero = run_sim(IC_zero, params_slow)
-    sol_slow_small = run_sim(IC_small, params_slow)
-    sol_fast_zero = run_sim(IC_zero, params_fast)
-    sol_fast_small = run_sim(IC_small, params_fast)
+    sol_slow_zero = run_sim(IC_zero, params_slow, tspan)
+    sol_slow_small = run_sim(IC_small, params_slow, tspan)
+    sol_fast_zero = run_sim(IC_zero, params_fast, tspan)
+    sol_fast_small = run_sim(IC_small, params_fast, tspan)
+
+    # case automation
+    cases_theta_slow = [
+        ("Ω=1.0, θ₀=0.0", sol_slow_zero),
+        ("Ω=1.0, θ₀=0.05", sol_slow_small)
+    ]
+
+    cases_theta_fast = [
+        ("Ω=12.0, θ₀=0.0", sol_fast_zero),
+        ("Ω=12.0, θ₀=0.05", sol_fast_small)
+    ]
+
+    cases_3d_slow = [
+        ("Ω=1.0, θ₀=0.0", sol_slow_zero, Ω_slow),
+        ("Ω=1.0, θ₀=0.05", sol_slow_small, Ω_slow)
+    ]
+
+    cases_3d_fast = [
+        ("Ω=12.0, θ₀=0.0", sol_fast_zero, Ω_fast),
+        ("Ω=12.0, θ₀=0.05", sol_fast_small, Ω_fast)
+    ]
+
+    cases_delta = [
+        ("Ω=1.0, θ₀=0.0", sol_slow_zero, Ω_slow),
+        ("Ω=1.0, θ₀=0.05", sol_slow_small, Ω_slow),
+        ("Ω=12.0, θ₀=0.0", sol_fast_zero, Ω_fast),
+        ("Ω=12.0, θ₀=0.05", sol_fast_small, Ω_fast)
+    ]
 
     # plot results
-    p = plot_θ(sol_slow_zero, label="Ω=1.0, θ₀=0.0")
-    plot!(p, sol_slow_small.t, getindex.(sol_slow_small.u,1), label="Ω=1.0, θ₀=0.05")
-    plot!(p, sol_fast_zero.t, getindex.(sol_fast_zero.u,1), label="Ω=12.0, θ₀=0.0")
-    plot!(p, sol_fast_small.t, getindex.(sol_fast_small.u,1), label="Ω=12.0, θ₀=0.05")
-    display(p)
-    println("Press Enter to continue to 3D trajectory plots...")
-    readline()
+    #θ(t) plots
+    for (cases, filename, title_label) in [(cases_theta_slow, "results/theta_vs_time_low_omega.png", "Low Ω"),
+                                           (cases_theta_fast, "results/theta_vs_time_high_omega.png", "High Ω")]
+        p_theta = plot(title="θ(t) - $title_label", xlabel="t (s)", ylabel="θ (rad)", legend=:outertopright)
+        for (label, sol) in cases
+            plot!(p_theta, sol.t, getindex.(sol.u,1), label=label, lw=2)
+        end
+        display(p_theta)
+        savefig(p_theta, filename)
+        println("Press Enter to continue to next plot...")
+        readline()
+    end
 
     # 3D trajectories
-    t_slow_zero, x_slow_zero, y_slow_zero, z_slow_zero = xyz_from_sol(sol_slow_zero, L, w1, h1, Ω_slow)
-    t_slow_small, x_slow_small, y_slow_small, z_slow_small = xyz_from_sol(sol_slow_small, L, w1, h1, Ω_slow)
-    t_fast_zero, x_fast_zero, y_fast_zero, z_fast_zero = xyz_from_sol(sol_fast_zero, L, w1, h1, Ω_fast)
-    t_fast_small, x_fast_small, y_fast_small, z_fast_small = xyz_from_sol(sol_fast_small, L, w1, h1, Ω_fast)
-    p3 = plot3d(x_slow_zero, y_slow_zero, z_slow_zero, label="Ω=1.0, θ₀=0.0")
-    plot3d!(x_slow_small, y_slow_small, z_slow_small, label="Ω=1.0, θ₀=0.05")
-    plot3d!(x_fast_zero, y_fast_zero, z_fast_zero, label="Ω=12.0, θ₀=0.0")
-    plot3d!(x_fast_small, y_fast_small, z_fast_small, label="Ω=12.0, θ₀=0.05")
-    display(p3)
+    for (cases, filename, title_label) in [(cases_3d_slow, "results/3d_trajectories_low_omega.png", "Low Ω"),
+                                           (cases_3d_fast, "results/3d_trajectories_high_omega.png", "High Ω")]
+        p_3d = plot3d(title="3D Trajectories - $title_label", xlabel="x", ylabel="y", zlabel="z", legend=:outertopright)
+        for (label, sol, Ω) in cases
+            t, x, y, z = xyz_from_sol(sol, L, w1, h1, Ω)
+            plot3d!(x, y, z, label=label, lw=2)
+        end
+        display(p_3d)
+        savefig(p_3d, filename)
+        println("Press Enter to continue to next plot...")
+        readline()
+    end
+
+    # Δθ''(t) plots
+    p_delta = plot(title="Δθ''(t) Between Symbolic Function and Hand-Calculated EOM", xlabel="t (s)", ylabel="Δθ'' (rad/s²)")
+    for (label, sol, Ω) in cases_delta
+        ts, deltas = solution_delta(sol, L, w1, h1, g, Ω)
+        plot!(p_delta, ts, deltas, label=label, lw=2)
+    end
+    display(p_delta)
+    savefig(p_delta, "results/theta_double_dot_delta.png")
     println("Press Enter to exit...")
     readline()
 end

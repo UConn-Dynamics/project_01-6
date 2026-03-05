@@ -46,9 +46,6 @@ EL_eq = EL_expr ~ 0
 # solve for θ''(t)
 θdd_rhs = solve_for(EL_eq, Dt(Dt(θ)))[1] |> simplify
 
-# right hand side of the ODE
-#θdd_rhs = θdd_eq.rhs
-
 # build numeric function for ODE solver
 θdd_func = build_function(
     θdd_rhs,
