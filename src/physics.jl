@@ -18,6 +18,13 @@ println("difference = ", simplify(difference))
 θdd_numeric(θ_val, θd_val, L_val, w1_val, h1_val, g_val, Ω_val, t_val) = 
     θdd_func(θ_val, θd_val, L_val, w1_val, h1_val, g_val, Ω_val, t_val)
 
-export θdd_numeric
+θdd_manual_numeric(θ_val, θd_val, L_val, w1_val, h1_val, g_val, Ω_val, t_val) = 
+    (Ω_val^2 / L_val) * (w1_val + L_val * sin(θ_val)) * cos(θ_val) - (g_val / L_val) * sin(θ_val)
+
+θdd_delta_numeric(θ_val, θd_val, L_val, w1_val, h1_val, g_val, Ω_val, t_val) =
+    θdd_numeric(θ_val, θd_val, L_val, w1_val, h1_val, g_val, Ω_val, t_val) - 
+    θdd_manual_numeric(θ_val, θd_val, L_val, w1_val, h1_val, g_val, Ω_val, t_val)
+
+export θdd_numeric, θdd_manual_numeric, θdd_delta_numeric
 
 end
