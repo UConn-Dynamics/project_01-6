@@ -3,16 +3,37 @@ module Visualize
 using Plots
 using Measures
 
+# ------------------------------------------------------------------------
+# Coordinate Conversion
+# ------------------------------------------------------------------------
+
+"""
+    xyz_from_sol(sol, L, w1, h1, Ω)
+
+Convert the ODE solution into x, y, z coordinates in the inertial frame.
+
+# Arguments
+- `sol`: solution object containing 't' and 'u' arrays 
+- `L`: length of the pendulum rod
+- `w1, h1`: pivot offsets
+- `Ω`: angular velocity of the rotating frame
+
+# Returns
+- `(t, x, y, z)`: time and position arrays
+"""
+
 function xyz_from_sol(sol, L, w1, h1, Ω)
     t = sol.t
     θs = getindex.(sol.u, 1)
 
-    x = similar(t)
+    # create arrays of size t
+    x = similar(t) 
     y = similar(t)
     z = similar(t)
 
-    for (i , (ti, θ)) in enumerate(zip(t, θs))
+    for (i , (ti, θ)) in enumerate(zip(t, θs)) 
 
+        # position equations for the mass in the inertial frame
         R = w1 + L * sin(θ)
         x[i] = R * cos(Ω * ti)
         y[i] = R * sin(Ω * ti)
@@ -24,7 +45,27 @@ function xyz_from_sol(sol, L, w1, h1, Ω)
 
 end
 
+# ------------------------------------------------------------------------
+# Frame Builder
+# ------------------------------------------------------------------------
+
+"""
+    build_frame(t_i, mass_x_i, mass_y_i, mass_z_i, w1, h1, Ω)
+
+Build the components of the pendulum frame for visualization.
+
+# Arguments
+- `t_i`: time at each step
+- `mass_x_i, mass_y_i, mass_z_i`: coordinates of mass at each time step
+- `w1, h1`: pivot offsets
+- `Ω`: angular velocity of the rotating frame
+
+# Returns
+- Coordinates for rod, pivot frame, and horizontal support arm for 3D plotting (arrays of x, y, z values)
+"""
+
 function build_frame(t_i, mass_x_i, mass_y_i, mass_z_i, w1, h1, Ω)
+    # position equations for the pivot point in the inertial frame
     pivot_x = w1 * cos(Ω * t_i)
     pivot_y = w1 * sin(Ω * t_i)
     pivot_z = h1
@@ -48,25 +89,42 @@ function build_frame(t_i, mass_x_i, mass_y_i, mass_z_i, w1, h1, Ω)
 
 end
 
+# ------------------------------------------------------------------------
+# Basic Plots
+# ------------------------------------------------------------------------
+
+"""
+    plot_θ(sol; label="")
+
+Plot theta vs time for a given solution
+"""
 function plot_θ(sol; label="")
     plot(sol.t, getindex.(sol.u,1), xlabel="t", ylabel="θ", label=label)
 
 end
-# ------------------------------------
-# Individual plot animations
-# ------------------------------------
 
+# ------------------------------------------------------------------------
+# Animation Functions
+# ------------------------------------------------------------------------
+
+"""
+    animate_theta(sol, Ω; filename="results/theta.gif", fps=30)
+
+Animate θ(t) and save as a GIF
+"""
 # animate θ(t)
 function animate_theta(sol, Ω; filename="results/theta.gif", fps=30)
     θs = getindex.(sol.u, 1)
     θmin  = minimum(θs)
     θmax  = maximum(θs)
 
-    #inds = 1:10:length(sol.t)
     inds = 1:length(sol.t)
     anim = @animate for i in inds
+
+        # parameters for current step
         t = sol.t[1:i]
         θs_i = θs[1:i]
+
         p = plot(t, θs_i, xlabel="t (s)", ylabel="θ (rad)", title="θ(t): Ω=$(Ω), θ₀ =$(θs_i[1])", legend=false, ylim=(θmin-0.05, θmax+0.05))
         scatter!(p, [t[end]], [θs_i[end]], color=:red, left_margin=5mm, right_margin=5mm, bottom_margin=5mm, top_margin=10mm, size = (600, 400))
         
@@ -77,6 +135,12 @@ function animate_theta(sol, Ω; filename="results/theta.gif", fps=30)
 
 end
 
+"""
+    animate_thetadot(sol, Ω; filename="results/thetadot.gif", fps=30)
+
+Animate θ'(t) and save as a GIF
+"""
+
 # animate θ'(t)
 function animate_thetadot(sol, Ω; filename="results/thetadot.gif", fps=30)
     θs  = getindex.(sol.u, 1)
@@ -84,11 +148,13 @@ function animate_thetadot(sol, Ω; filename="results/thetadot.gif", fps=30)
     θdmin  = minimum(θd_s)
     θdmax  = maximum(θd_s)
    
-    #inds = 1:10:length(sol.t)
     inds = 1:length(sol.t)
     anim = @animate for i in inds
+
+        # parameters for current step
         t = sol.t[1:i]
         θds = θd_s[1:i]
+
         p = plot(t, θds, xlabel="t (s)", ylabel="θ'", title="θ'(t): Ω=$(Ω), θ₀ =$(θs[1])", legend=false, ylim=(θdmin-0.05, θdmax+0.05))
         scatter!(p, [t[end]], [θds[end]], color=:blue, left_margin=5mm, right_margin=5mm, bottom_margin=5mm, top_margin=10mm, size = (600, 400))
         
@@ -99,14 +165,20 @@ function animate_thetadot(sol, Ω; filename="results/thetadot.gif", fps=30)
 
 end
 
+"""
+    animate_3d(sol, L, w1, h1, Ω; filename="results/3d_trajectory.gif", fps=30)
+
+Animate the 3D trajectory and save as a GIF
+"""
+
 function animate_3d(sol, L, w1, h1, Ω; filename="results/3d_trajectory.gif", fps=30)
     t, x, y, z = xyz_from_sol(sol, L, w1, h1, Ω)
     θs = getindex.(sol.u, 1)
 
-    #inds = 1:10:length(sol.t)
     inds = 1:length(sol.t)
     anim = @animate for i in inds
         
+        # parameters for current step
         t_i = t[i]
         mass_x_i, mass_y_i, mass_z_i = x[i], y[i], z[i]
         
@@ -130,6 +202,12 @@ function animate_3d(sol, L, w1, h1, Ω; filename="results/3d_trajectory.gif", fp
 
 end
 
+"""
+    animate_pendulum_dashboard(sol, L, w1, h1, Ω; filename="results/pendulum_dashboard.gif", fps=30)
+
+Animate a combined dashboard with θ(t), θ'(t), and 3D trajectory, and save as a GIF
+"""
+
 # combined dashboard
 function animate_pendulum_dashboard(sol, L, w1, h1, Ω; filename="results/pendulum_dashboard.gif", fps=30)
     θs = getindex.(sol.u, 1)
@@ -146,6 +224,7 @@ function animate_pendulum_dashboard(sol, L, w1, h1, Ω; filename="results/pendul
     inds = 1:length(sol.t)
     anim = @animate for i in inds
         
+        # parameters for current step
         θs_i  = θs[1:i]
         θds_i = θd_s[1:i]
         t_i = t[i]
@@ -180,6 +259,10 @@ function animate_pendulum_dashboard(sol, L, w1, h1, Ω; filename="results/pendul
     #display(anim)
 
 end
+
+# ------------------------------------------------------------------------
+# Exported Functions
+# ------------------------------------------------------------------------
 
 export xyz_from_sol, build_frame, plot_θ, animate_theta, animate_thetadot, animate_3d, animate_pendulum_dashboard
 

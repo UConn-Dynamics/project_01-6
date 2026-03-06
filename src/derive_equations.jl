@@ -2,12 +2,20 @@ module DeriveEquations
 
 using ModelingToolkit
 
+# ------------------------------------------------------------------------
+# Symbolic Variables and Parameters
+# ------------------------------------------------------------------------
+
 @variables t θ(t)
 @parameters m L w1 h1 g Ω
 
 Dt = Differential(t)
 Dθ = Differential(θ)
 Dθd = Differential(Dt(θ))
+
+# ------------------------------------------------------------------------
+# Coordinate Transformation
+# ------------------------------------------------------------------------
 
 # rotation matrix about z
 R(ϕ) = [ cos(ϕ) -sin(ϕ) 0;
@@ -25,6 +33,10 @@ r = R(Ω*t) * r_local
 #velocity of mass in inertial frame
 v = expand_derivatives.(Dt.(r))
 
+# ------------------------------------------------------------------------
+# Energies and Lagrangian
+# ------------------------------------------------------------------------
+
 # kinetic energy
 T = simplify((1/2) * m * sum(v .* v))
 
@@ -33,6 +45,10 @@ V = m * g * (h1 - L*cos(θ))
 
 # Lagrangian
 Lagr = T - V
+
+# ------------------------------------------------------------------------
+# Equations of Motion
+# ------------------------------------------------------------------------
 
 # Euler-Lagrange equation
 EL_expr = simplify(
@@ -52,6 +68,10 @@ EL_eq = EL_expr ~ 0
     θ, Dt(θ), L, w1, h1, g, Ω, t;
     expression=Val{false}
 )
+
+# ------------------------------------------------------------------------
+# Exported Functions
+# ------------------------------------------------------------------------
 
 export θdd_func, θdd_rhs, Lagr
 
