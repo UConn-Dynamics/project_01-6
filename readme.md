@@ -4,7 +4,6 @@
 [Christian DiPietrantonio](mailto:hwp25002@uconn.edu)
 
 ## Project Overview: 
-
 In this project, a pendulum is attached to a spinning frame. The frame has dimensions, 
 
 $h_1 = 0.2~m$
@@ -22,7 +21,6 @@ Your team's goal is to
 - visualize the solution with plots and animations
 
 ## Running the Program:
-
 From the project directory, run:
 
 ```bash
@@ -43,7 +41,6 @@ The non-animated plots are:
 All source code is in the `src/` directory.
 
 ## Project Structure
-
 ```
 project_01-6/
 |
@@ -62,6 +59,7 @@ project_01-6/
 |
 └───── README.md                   # project documentation
 ```
+
 ## Results
 Four specific cases were evaluated, and the results are presented below. 
 <p align="center">
@@ -77,19 +75,20 @@ Four specific cases were evaluated, and the results are presented below.
     <img src="results/dashboard_omega_120_theta0_005.gif" width = 750>
 </p>
 
+## Conclusions
+We can make several conclusions from the cases above. First, we notice that solving the same equation with different initial conditions has a significant effect on the behavior of the system. When starting with a greater initial angle of displacement $(\theta_0 = 0.25)$, the mass experiences greater displacements and velocities in its inertial reference frame, the $x'$-$z'$ plane. Furthermore, at low rotation speeds $(\omega = 1)$, the pendulum behaves nearly like the simple pendulum shown in class. However, at high rotation speeds $(omega = 12)$, centrifugal effects are introduced, increasing the displacement and velocity in addition to creating much more complicated trajectories of the mass.
+
+Overall, this project was a great example of how Lagrangian mechanics can be used to define a complex system! This project also demonstrated the power of using programming (more specifically, Julia) to perform complex math as opposed to doing so by hand. 
+
 A note on accuracy. As mentioned previously, to explore the symbolic capabilities of Julia, ModelingToolkit was used to derive the EOM for the pendulum symbolically (but following the same procedure as the derivation below). To evaluate the accuracy of doing this, the following plot was created to find the difference between the symbolic EOM and the one derived by hand.
 
 <p align="center">
     <img src="results/theta_double_dot_delta.png" width = 500>
 </p>
 
-From this plot, we observe that the for all cases evaluated, the magnitude of the error never exceeds approximately $7.5 \cdot 10^{-14}$, which is effectively zero. The variation in the error values at each time step suggests that the observed error is due to floating-point arithmetic and machine precision limitations. 
-
-
-
+From this plot, we observe that for all cases evaluated, the magnitude of the error never exceeds approximately $7.5 \cdot 10^{-14}$, which is effectively zero. The variation in the error values at each time step suggests that the observed error is due to floating-point arithmetic and machine precision limitations. 
 
 ## Analysis:
-
 To solve this problem, we can define a reference frame that rotates with the pivot about the z-axis. At time t, the rotating reference frame rotates by $\phi(t) = \Omega t$ relative to the inertial frame. Consider a vector $\vec{v} = x' \widehat{i'} + y' \widehat{j'} = x \widehat{i} + y \widehat{j}$. We know that $\widehat{i'} = \cos(\phi) \widehat{i} + \sin(\phi) \widehat{j}$ and $\widehat{j'} = \cos(90^\circ + \phi) \widehat{i} + \sin(90^\circ + \phi) \widehat{j} = -\sin(\phi) \widehat{i} + \cos(\phi) \widehat{j}$. We also know that $z = z'$. Now, since the trajectory of the pendulum is defined in the inertial frame, we must introduce a method to transform coordinates from the rotational frame back to the inertial frame. Using our original expression for $\vec{v}$, we can substitute the expressions for $\widehat{i'}$ and $\widehat{j'}$ to find a rotation matrix about the z-axis, $R_{z}(\phi)$, such that
 
 $$
