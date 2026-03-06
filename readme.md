@@ -20,46 +20,6 @@ Your team's goal is to
 - solve for the motion for a slow rotation speed and a fast rotation speed
 - visualize the solution with plots and animations
 
-## Running the Program:
-From the project directory, run:
-
-```bash
-julia main.jl 
-```
-
-The program may take a few minutes to run. All final plots are output to the `results/` directory and use the following naming convention: `plottype_omega_value_theta_value.extension`. The types of animated plots are:
-- 3d Trajectory Plots
-- Theta versus time
-- Theta dot versus time
-- Dashboards (which include the three above)
-
-The non-animated plots are:
-- 3d Trajectories (for the slow and fast rotation speed)
-- Theta versus time (for the slow and fast rotation speed)
-- Angular acceleration difference (between the symbolic Equation of Motion (EOM) found using Julia and the EOM derived by hand below)
-
-All source code is in the `src/` directory.
-
-## Project Structure
-```
-project_01-6/
-|
-├───── archive/ # old plots and files
-|
-├───── notes/   # hand calculations
-|
-├───── src/     # Source Code
-|       |
-|       ├───── derive_equations.jl # derive EOM
-|       ├───── physics.jl          # create functions for symbolic and hand calc EOMs
-|       ├───── simulate.jl         # solve EOM
-|       └───── visualize.jl        # define visualization functions
-|
-├───── main.jl                     # main driver
-|
-└───── README.md                   # project documentation
-```
-
 ## Results
 Four specific cases were evaluated, and the results are presented below. 
 <p align="center">
@@ -88,7 +48,7 @@ A note on accuracy. As mentioned previously, to explore the symbolic capabilitie
 
 From this plot, we observe that for all cases evaluated, the magnitude of the error never exceeds approximately $7.5 \cdot 10^{-14}$, which is effectively zero. The variation in the error values at each time step suggests that the observed error is due to floating-point arithmetic and machine precision limitations. 
 
-## Analysis:
+## Derivation of EOM:
 To solve this problem, we can define a reference frame that rotates with the pivot about the z-axis. At time t, the rotating reference frame rotates by $\phi(t) = \Omega t$ relative to the inertial frame. Consider a vector $\vec{v} = x' \widehat{i'} + y' \widehat{j'} = x \widehat{i} + y \widehat{j}$. We know that $\widehat{i'} = \cos(\phi) \widehat{i} + \sin(\phi) \widehat{j}$ and $\widehat{j'} = \cos(90^\circ + \phi) \widehat{i} + \sin(90^\circ + \phi) \widehat{j} = -\sin(\phi) \widehat{i} + \cos(\phi) \widehat{j}$. We also know that $z = z'$. Now, since the trajectory of the pendulum is defined in the inertial frame, we must introduce a method to transform coordinates from the rotational frame back to the inertial frame. Using our original expression for $\vec{v}$, we can substitute the expressions for $\widehat{i'}$ and $\widehat{j'}$ to find a rotation matrix about the z-axis, $R_{z}(\phi)$, such that
 
 $$
@@ -234,3 +194,52 @@ $$
 $$
 
 Therefore, we can choose a low speed of $ \Omega_s = 1$ rad/s and a high speed of $\Omega_f = 12$ rad/s. We can also evaluate the cases where the pendulum starts at rest, $\theta_o = 0$, and where the pendulum starts with a small displacement, $\theta_o = 0.25$ rad.
+
+## Reproducing Results:
+From the project directory, run:
+
+```bash
+julia main.jl 
+```
+
+The program may take a few minutes to run. All final plots are output to the `results/` directory and use the following naming convention: `plottype_omega_value_theta_value.extension`. The types of animated plots are:
+- 3d Trajectory Plots
+- Theta versus time
+- Theta dot versus time
+- Dashboards (which include the three above)
+
+The non-animated plots are:
+- 3d Trajectories (for the slow and fast rotation speed)
+- Theta versus time (for the slow and fast rotation speed)
+- Angular acceleration difference (between the symbolic Equation of Motion (EOM) found using Julia and the EOM derived by hand below)
+
+All source code is in the `src/` directory.
+
+## Project Dependencies
+This project was developed and tested with **Julia version 1.12.4**
+
+The following packages are required:
+- `ModelingToolkit`
+- `OrdinaryDiffEq`
+- `Plots`
+- `Measures`
+
+## Project Structure
+```
+project_01-6/
+|
+├───── archive/ # old plots and files
+|
+├───── notes/   # hand calculations
+|
+├───── src/     # Source Code
+|       |
+|       ├───── derive_equations.jl # derive EOM
+|       ├───── physics.jl          # create functions for symbolic and hand calc EOMs
+|       ├───── simulate.jl         # solve EOM
+|       └───── visualize.jl        # define visualization functions
+|
+├───── main.jl                     # main driver
+|
+└───── README.md                   # project documentation
+```
