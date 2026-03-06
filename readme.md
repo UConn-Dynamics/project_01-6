@@ -43,10 +43,27 @@ The non-animated plots are:
 All source code is in the `src/` directory.
 
 ## Project Structure
-TBD
 
+```
+project_01-6/
+|
+|----- archive/ # old plots and files
+|
+|----- notes/   # hand calculations
+|
+|----- src/     # Source Code
+|       |
+|       |----- derive_equations.jl # derive EOM
+|       |----- physics.jl          # create functions for symbolic and hand calc EOMs
+|       |----- simulate.jl         # solve EOM
+|       |----- visualize.jl        # define visualization functions
+|
+|----- main.jl                     # main driver
+|
+|----- readme.md                   # project documentation
+```
 ## Results
-Four specific cases were evaluated, the results of which can be seen below. 
+Four specific cases were evaluated, and the results are presented below. 
 <p align="center">
     <img src="results/dashboard_omega_10_theta0_00.gif" width = 750>
 </p>
@@ -66,7 +83,7 @@ A note on accuracy. As mentioned previously, to explore the symbolic capabilitie
     <img src="results/theta_double_dot_delta.png" width = 500>
 </p>
 
-From this plot, we observe that the for all cases evaluated, the magnitude of the error never exceeds approximately $7.5 \cdot 10^{-14}$, which is effectively zero. The variation in the error values at each time step suggests that the observed error is due to floating point arithmetic and machine precision limitations. 
+From this plot, we observe that the for all cases evaluated, the magnitude of the error never exceeds approximately $7.5 \cdot 10^{-14}$, which is effectively zero. The variation in the error values at each time step suggests that the observed error is due to floating-point arithmetic and machine precision limitations. 
 
 
 
@@ -120,7 +137,7 @@ h_1
 \end{bmatrix}
 $$
 
-The position of the mass the rotating frame relative to the pivot can be expressed as:
+The position of the mass in the rotating frame relative to the pivot can be expressed as:
 
 $$
 \vec{r'}_{Mass, rel} = 
@@ -167,7 +184,7 @@ $$
 z(t) = h_1 - L \cos \theta (t)
 $$
 
-Taking the time-derivative of each allows us to find the speed of the mass, which can then be used to find the kinetic energy of the system:
+Taking the time derivative of each allows us to find the speed of the mass, which can then be used to find the kinetic energy of the system:
 
 $$
 T = \frac{1}{2} m \left[L^2 \dot{\theta}(t)^2 + \Omega^2 (w_1 + L \sin \theta (t)^2) \right]
@@ -191,7 +208,7 @@ $$
 \ddot{\theta}(t) = \frac{\Omega^2}{L} \left(w_1 + L \sin \theta (t) \right) \cos \theta (t) - \frac{g}{L} \sin \theta (t)
 $$
 
-**Please note, a full derivation of the equation above can be found in the project01_team06_notes.pdf file in the notes directory of the repository.** 
+**Please note that a full derivation of the equation above can be found in the project01_team06_notes.pdf file in the notes directory of the repository.** 
 
 Now, in order to program this system in Julia, we must decompose the second-order ODE above into two first-order ODEs. We can do that by defining:
 
