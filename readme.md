@@ -36,7 +36,7 @@ Four specific cases were evaluated, and the results are presented below.
 </p>
 
 ## Conclusions
-We can make several conclusions from the cases above. First, we notice that solving the same equation with different initial conditions has a significant effect on the behavior of the system. When starting with a greater initial angle of displacement $(\theta_0 = 0.25)$, the mass experiences greater displacements and velocities in its inertial reference frame, the $x'$-$z'$ plane. Furthermore, at low rotation speeds $(\omega = 1)$, the pendulum behaves nearly like the simple pendulum shown in class. However, at high rotation speeds $(omega = 12)$, centrifugal effects are introduced, increasing the displacement and velocity in addition to creating much more complicated trajectories of the mass.
+We can make several conclusions from the cases above. First, we notice that solving the same equation with different initial conditions has a significant effect on the behavior of the system. When starting with a greater initial angle of displacement $(\theta_0 = 0.25)$, the mass experiences greater displacements and velocities in its inertial reference frame, the $x'$ - $z'$ plane. Furthermore, at low rotation speeds $(\Omega = 1)$, the pendulum behaves nearly like the simple pendulum shown in class. However, at high rotation speeds $(\Omega = 12)$, centrifugal effects are introduced, increasing the displacement and velocity in addition to creating much more complicated trajectories of the mass.
 
 Overall, this project was a great example of how Lagrangian mechanics can be used to define a complex system! This project also demonstrated the power of using programming (more specifically, Julia) to perform complex math as opposed to doing so by hand. 
 
