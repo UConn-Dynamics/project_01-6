@@ -22,6 +22,12 @@ function solution_delta(sol, L, w1, h1, g, Ω)
     return ts, deltas
 end
 
+function safe_filename(label::String)
+    omega = match(r"Ω=([\d.]+)", label).captures[1] |> x -> replace(x, "." => "")
+    theta = match(r"θ₀=([\d.]+)", label).captures[1] |> x -> replace(x, "." => "")
+    return "omega_$(omega)_theta0_$(theta)"
+end
+
 function main()
     # physical constants
     L = 0.15   # length of pendulum
@@ -35,7 +41,7 @@ function main()
 
     # initial conditions
     IC_zero = [0.0, 0.0]    # initial angle of zero
-    IC_small = [0.05, 0.0]  # small initial angle
+    IC_small = [0.25, 0.0]  # small initial angle
     
     params_slow = (L, w1, h1, g, Ω_slow)
     params_fast = (L, w1, h1, g, Ω_fast)
@@ -74,7 +80,16 @@ function main()
         ("Ω=12.0, θ₀=0.05", sol_fast_small, Ω_fast)
     ]
 
-    # plot results
+
+    #set plotting limits
+    xlims = (-0.27, 0.27)
+    ylims = (-0.27, 0.27)
+    zlims = (0.0, 0.37)
+
+    # ------------------------------------
+    # static plots
+    # ------------------------------------
+
     #θ(t) plots
     for (cases, filename, title_label) in [(cases_theta_slow, "results/theta_vs_time_low_omega.png", "Low Ω"),
                                            (cases_theta_fast, "results/theta_vs_time_high_omega.png", "High Ω")]
@@ -84,22 +99,22 @@ function main()
         end
         display(p_theta)
         savefig(p_theta, filename)
-        println("Press Enter to continue to next plot...")
-        readline()
+        #println("Press Enter to continue to next plot...")
+        #readline()
     end
 
     # 3D trajectories
     for (cases, filename, title_label) in [(cases_3d_slow, "results/3d_trajectories_low_omega.png", "Low Ω"),
                                            (cases_3d_fast, "results/3d_trajectories_high_omega.png", "High Ω")]
-        p_3d = plot3d(title="3D Trajectories - $title_label", xlabel="x", ylabel="y", zlabel="z", legend=:outertopright)
+        p_3d = plot3d(title="3D Trajectories - $title_label", xlabel="x", ylabel="y", zlabel="z", legend=:outertopright, xlims=xlims, ylims=ylims, zlims=zlims)
         for (label, sol, Ω) in cases
             t, x, y, z = xyz_from_sol(sol, L, w1, h1, Ω)
             plot3d!(x, y, z, label=label, lw=2)
         end
         display(p_3d)
         savefig(p_3d, filename)
-        println("Press Enter to continue to next plot...")
-        readline()
+        #println("Press Enter to continue to next plot...")
+        #readline()
     end
 
     # Δθ''(t) plots
@@ -110,8 +125,39 @@ function main()
     end
     display(p_delta)
     savefig(p_delta, "results/theta_double_dot_delta.png")
-    println("Press Enter to exit...")
-    readline()
+    #println("Press Enter to contine to animations...")
+    #readline()
+
+    # ------------------------------------
+    # animations
+    # ------------------------------------
+
+    for (label, sol, Ω) in cases_delta
+        fname_base = safe_filename(label)
+
+        # animate θ(t)
+        animate_theta(sol, Ω, filename="results/theta_$(fname_base).gif")
+        #println("Press Enter to contine to next animation...")
+        #readline()
+
+        # animate θ'(t)
+        animate_thetadot(sol, Ω, filename="results/thetadot_$(fname_base).gif")
+        #println("Press Enter to contine to next animation...")
+        #readline()
+
+
+        # animate 3D trajectory
+        animate_3d(sol, L, w1, h1, Ω, filename="results/3d_trajectory_$(fname_base).gif")
+        #println("Press Enter to contine to next animation...")
+        #readline()
+
+        # animate pendulum dashboard
+        animate_pendulum_dashboard(sol, L, w1, h1, Ω, filename="results/dashboard_$(fname_base).gif")
+        #println("Press Enter to exit...")
+        #readline()
+
+    end
+
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
