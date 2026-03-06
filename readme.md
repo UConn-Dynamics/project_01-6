@@ -193,7 +193,7 @@ $$
 \omega_o = \sqrt{\frac{g}{L}} = \sqrt{\frac{9.81}{0.15}} \approx 8.08 \: \text{rad/s}
 $$
 
-Therefore, we can choose a low speed of $ \Omega_s = 1$ rad/s and a high speed of $\Omega_f = 12$ rad/s. We can also evaluate the cases where the pendulum starts at rest, $\theta_o = 0$, and where the pendulum starts with a small displacement, $\theta_o = 0.25$ rad.
+Therefore, we can choose a low speed of $\Omega_s = 1$ rad/s and a high speed of $\Omega_f = 12$ rad/s. We can also evaluate the cases where the pendulum starts at rest, $\theta_o = 0$, and where the pendulum starts with a small displacement, $\theta_o = 0.25$ rad.
 
 ## Reproducing Results:
 From the project directory, run:
