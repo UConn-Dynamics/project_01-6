@@ -47,20 +47,20 @@ All source code is in the `src/` directory.
 ```
 project_01-6/
 |
-|----- archive/ # old plots and files
+├───── archive/ # old plots and files
 |
-|----- notes/   # hand calculations
+├───── notes/   # hand calculations
 |
-|----- src/     # Source Code
+├───── src/     # Source Code
 |       |
-|       |----- derive_equations.jl # derive EOM
-|       |----- physics.jl          # create functions for symbolic and hand calc EOMs
-|       |----- simulate.jl         # solve EOM
-|       |----- visualize.jl        # define visualization functions
+|       ├───── derive_equations.jl # derive EOM
+|       ├───── physics.jl          # create functions for symbolic and hand calc EOMs
+|       ├───── simulate.jl         # solve EOM
+|       └───── visualize.jl        # define visualization functions
 |
-|----- main.jl                     # main driver
+├───── main.jl                     # main driver
 |
-|----- readme.md                   # project documentation
+└───── README.md                   # project documentation
 ```
 ## Results
 Four specific cases were evaluated, and the results are presented below. 
